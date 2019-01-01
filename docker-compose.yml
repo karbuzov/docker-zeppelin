@@ -5,7 +5,7 @@ services:
     image: hseeberger/scala-sbt
     volumes:
       - ./scala/:/scala/
-    command: bash -c "cd /scala/sparkjob/ && sbt clean package"
+    command: bash -c "cd /scala/sparkjob/ && sbt clean assembly"
     
   namenode:
     image: bde2020/hadoop-namenode:1.1.0-hadoop2.8-java8
