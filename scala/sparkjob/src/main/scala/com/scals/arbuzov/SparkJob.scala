@@ -7,6 +7,7 @@ import org.apache.spark.SparkContext
 import org.apache.spark.SparkConf
 import com.pragmaticplay.bingo.core.logic.BingoLogicImpl
 import com.pragmaticplay.bingo.core.logic.models._
+import org.apache.spark.sql.SQLContext
 
 object SparkJob {
 
@@ -15,9 +16,36 @@ object SparkJob {
       // initialise spark context
       val conf = new SparkConf().setAppName("HelloWorld")
       val sc = new SparkContext(conf)
+
+      val sqlContext = new SQLContext(sc)
+
+      sc.addJar("hdfs://javachain.com/lib/ojdbc6.jar")
+
+//      val ds = args(0)
+//      val cur = args(1)
+
+      val df1 = sqlContext.read.format("jdbc")
+        .option("url", "jdbc:oracle:thin:@localhost:1521:bingo")
+      .option("driver", "oracle.jdbc.driver.OracleDriver")
+//        .option("dbtable", "Javachain_Oracle.Javachain_log")
+        .option("user", "develop")
+        .option("password", "develop")
+        .option("dbtable", s"(select * from bingo_patterns)")
+        .option("lowerBound",1L)
+        .option("upperBound",100000L)
+        .option("numPartitions",100)
+        .option("fetchSize", "1000")
+        .load()
+
+
+
+
+
+
+
       println("############################")
       val bingoLogic = new BingoLogicImpl();
-      println("############################000")
+      println("############################000=========" + df1)
 
       val cards = new util.ArrayList[BingoPurchasedCard]()
       val patterns = new util.ArrayList[Pattern]()
